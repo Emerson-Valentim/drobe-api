@@ -9,7 +9,7 @@ Drobe is a simple, personal wardrobe management app that allows you to catalog y
 Add basic details for each clothing item:
 
 - Name (e.g., "Red T-Shirt")
-- Category (e.g., "Shirt", "Jeans", "Jacket") 
+- Category (e.g., "Shirt", "Jeans", "Jacket")
 - Image (photo of the item)
 
 ### 2. View Clothing Items

@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: cmd/api/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=drobe
+    volumes:
+      - .:/app  # Mount the current directory for hot reloading
+    command: air  # Use air for hot reloading in development
+    depends_on:
+      - postgres
+      - localstack
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=dynamodb
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - SERVICES=s3
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./scripts/localstack:/etc/localstack/init/ready.d"
+    networks:
+      - drobe-network
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=drobe
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - drobe-network
+
+volumes:
+  postgres_data:
+
+networks:
+  drobe-network:
+    driver: bridge

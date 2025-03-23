@@ -1,38 +1,37 @@
 package clothing
 
-import (
-	"github.com/emersonvalentim/drobe-api"
-)
-
-type clothingService struct {
-	// TODO: Add storage mechanism (database, file, etc.)
+type Service struct {
+	repo *Repository
 }
 
-func NewClothingService() drobe.ClothingService {
-	return &clothingService{}
+func NewService() *Service {
+	return &Service{
+		repo: &Repository{},
+	}
 }
 
-func (s *clothingService) GetItem(id string) (*drobe.ClothingItem, error) {
+// Add methods to match router endpoints and database schema
+type Cloth struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Category    string `json:"category"`
+	Size        string `json:"size"`
+	Color       string `json:"color"`
+	Brand       string `json:"brand"`
+	ImageURL    string `json:"image_url"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+}
+
+func (s *Service) ListClothes() ([]Cloth, error) {
 	// TODO: Implement
 	return nil, nil
 }
 
-func (s *clothingService) ListItems() ([]drobe.ClothingItem, error) {
+func (s *Service) GetCloth(id string) (*Cloth, error) {
 	// TODO: Implement
 	return nil, nil
 }
 
-func (s *clothingService) CreateItem(item *drobe.ClothingItem) error {
-	// TODO: Implement
-	return nil
-}
-
-func (s *clothingService) UpdateItem(item *drobe.ClothingItem) error {
-	// TODO: Implement
-	return nil
-}
-
-func (s *clothingService) DeleteItem(id string) error {
-	// TODO: Implement
-	return nil
-}
+// Add other service methods...
