@@ -25,7 +25,18 @@ This project follows a service-oriented architecture with:
 - Types: Core domain models
 - Documentation: API and project documentation
 
+## Commands
+
+### Lint
+
+`golangci-lint run ./... --fix`
+
+### Generate models
+
+`sqlc generate`
+
 ## Required tools
 
 - github.com/hedhyw/go-import-lint
 - github.com/golang-migrate/migrate
+- github.com/sqlc-dev/sqlc

@@ -11,7 +11,7 @@ servers:
 paths:
   /api/clothes:
     get:
-      summary: Get all clothes
+      summary: List all clothes
       responses:
         '200':
           description: List of clothes retrieved successfully
@@ -20,77 +20,194 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: string
-                    example: ok
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Cloth'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    
     post:
       summary: Create a new clothing item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClothRequest'
       responses:
-        '200':
+        '201':
           description: Clothing item created successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-  /clothes/{id}:
+                $ref: '#/components/schemas/Cloth'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/clothes/{id}:
+    parameters:
+      - $ref: '#/components/parameters/UUIDParam'
+    
     get:
       summary: Get a clothing item by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: Clothing item retrieved successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
+                $ref: '#/components/schemas/Cloth'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    
     put:
       summary: Update a clothing item
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClothRequest'
       responses:
         '200':
           description: Clothing item updated successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
+                $ref: '#/components/schemas/Cloth'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    
     delete:
       summary: Delete a clothing item
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
-        '200':
+        '204':
           description: Clothing item deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  schemas:
+    UUID:
+      type: string
+      pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+      example: "123e4567-e89b-12d3-a456-426614174000"
+      description: A UUID v4 string
+
+    Cloth:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        name:
+          type: string
+          minLength: 1
+        category:
+          type: string
+          minLength: 1
+        color:
+          type: string
+          minLength: 1
+        size:
+          type: string
+          minLength: 1
+        brand:
+          type: string
+          minLength: 1
+        location:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - category
+        - color
+        - size
+        - brand
+        - created_at
+        - updated_at
+
+    CreateClothRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        category:
+          type: string
+          minLength: 1
+        color:
+          type: string
+          minLength: 1
+        size:
+          type: string
+          minLength: 1
+        brand:
+          type: string
+          minLength: 1
+      required:
+        - name
+        - category
+        - color
+        - size
+        - brand
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  parameters:
+    UUIDParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/UUID'
+      description: The UUID of the resource

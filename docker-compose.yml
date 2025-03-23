@@ -21,6 +21,8 @@ services:
     depends_on:
       - migrations
       - localstack
+    networks:
+      - drobe-network
 
   migrations:
     build: 

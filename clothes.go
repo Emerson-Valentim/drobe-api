@@ -3,7 +3,7 @@ package drobe
 import (
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/emersonvalentim/drobe-api/internal/uuid"
 )
 
 // Cloth represents a single piece of clothing

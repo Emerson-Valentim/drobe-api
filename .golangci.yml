@@ -1,6 +1,10 @@
 linters:
   enable:
     - goimports
+    - gofmt
+    - govet
+    - gosimple
+    - staticcheck
 
 linters-settings:
   goimports:
