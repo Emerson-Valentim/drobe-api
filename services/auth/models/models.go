@@ -8,8 +8,9 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Clothe struct {
+type Inventory struct {
 	ID        pgtype.UUID
+	OwnerID   pgtype.UUID
 	Name      string
 	Category  string
 	Color     string
@@ -18,4 +19,14 @@ type Clothe struct {
 	Location  string
 	CreatedAt pgtype.Timestamp
 	UpdatedAt pgtype.Timestamp
+}
+
+type User struct {
+	ID           pgtype.UUID
+	Email        string
+	FirstName    string
+	LastName     string
+	PasswordHash string
+	CreatedAt    pgtype.Timestamp
+	UpdatedAt    pgtype.Timestamp
 }

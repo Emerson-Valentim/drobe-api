@@ -9,7 +9,7 @@ A Go-based API service for managing clothes and wardrobe.
 ├── cmd/           # Application entry points
 ├── services/      # Business logic and services
 ├── docs/          # Documentation
-└── clothes.go     # Core types and models
+└── item.go     # Core types and models
 ```
 
 ## Getting Started
@@ -37,6 +37,6 @@ This project follows a service-oriented architecture with:
 
 ## Required tools
 
-- github.com/hedhyw/go-import-lint
+- github.com/golangci/golangci-lint
 - github.com/golang-migrate/migrate
 - github.com/sqlc-dev/sqlc

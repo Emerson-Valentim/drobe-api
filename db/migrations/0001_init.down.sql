@@ -1,2 +1,2 @@
-DROP TABLE IF EXISTS clothes;
+DROP TABLE IF EXISTS inventory;
 

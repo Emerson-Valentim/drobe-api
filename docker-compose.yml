@@ -14,7 +14,7 @@ services:
       - POSTGRES_DB=drobe
       - S3_ENDPOINT=http://localstack:4566
       - S3_REGION=us-east-1
-      - S3_BUCKET=clothes
+      - S3_BUCKET=inventory
     volumes:
       - .:/app  # Mount the current directory for hot reloading
     command: air  # Use air for hot reloading in development
@@ -30,7 +30,8 @@ services:
       dockerfile: cmd/migrations/Dockerfile
     command: ./main
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - drobe-network
 
@@ -59,6 +60,18 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=drobe
+    networks:
+      - drobe-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
     networks:
       - drobe-network
 

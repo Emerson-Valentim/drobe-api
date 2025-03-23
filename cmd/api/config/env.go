@@ -14,5 +14,11 @@ type Env struct {
 	// S3/LocalStack configuration
 	S3Endpoint string `env:"S3_ENDPOINT" envDefault:"http://localhost:4566"`
 	S3Region   string `env:"S3_REGION" envDefault:"us-east-1"`
-	S3Bucket   string `env:"S3_BUCKET" envDefault:"clothes"`
+	S3Bucket   string `env:"S3_BUCKET" envDefault:"inventory"`
+
+	// JWT configuration
+	JWTSecret string `env:"JWT_SECRET" envDefault:"secret"`
+
+	// Auth configuration
+	AuthSecret string `env:"AUTH_SECRET" envDefault:"secret"`
 }

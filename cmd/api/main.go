@@ -8,7 +8,8 @@ import (
 	"github.com/emersonvalentim/drobe-api/cmd/api/router"
 	"github.com/emersonvalentim/drobe-api/internal/env"
 	"github.com/emersonvalentim/drobe-api/internal/postgres"
-	"github.com/emersonvalentim/drobe-api/services/clothing"
+	"github.com/emersonvalentim/drobe-api/services/auth"
+	"github.com/emersonvalentim/drobe-api/services/inventory"
 )
 
 func main() {
@@ -23,9 +24,10 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	clothService := clothing.NewService(clothing.NewRepository(postgres))
+	inventoryService := inventory.NewService(inventory.NewRepository(postgres))
+	authService := auth.NewService(cfg.AuthSecret, cfg.JWTSecret, auth.NewRepository(postgres))
 
-	router := router.NewRouter(clothService, &cfg)
+	router := router.NewRouter(inventoryService, authService, &cfg)
 	router.Register()
 }
 

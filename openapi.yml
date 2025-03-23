@@ -1,20 +1,74 @@
 openapi: 3.1.0
 info:
   title: Drobe API
-  description: API for managing clothing items in a digital wardrobe
+  description: API for managing inventory items in a digital wardrobe
   version: 1.0.0
 
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8080/api
     description: Local development server
 
 paths:
-  /api/clothes:
-    get:
-      summary: List all clothes
+  /auth/signup:
+    post:
+      summary: Sign up a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
       responses:
-        '200':
-          description: List of clothes retrieved successfully
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /auth/signin:
+    post:
+      summary: Sign in an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+      responses:
+        "200":
+          description: User signed in successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /inventory:
+    get:
+      summary: List all items
+      responses:
+        "200":
+          description: List of items retrieved successfully
           content:
             application/json:
               schema:
@@ -23,97 +77,97 @@ paths:
                   results:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Cloth'
-        '500':
-          $ref: '#/components/responses/InternalError'
-    
-    post:
-      summary: Create a new clothing item
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateClothRequest'
-      responses:
-        '201':
-          description: Clothing item created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cloth'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalError'
+                      $ref: "#/components/schemas/Item"
+        "500":
+          $ref: "#/components/responses/InternalError"
 
-  /api/clothes/{id}:
-    parameters:
-      - $ref: '#/components/parameters/UUIDParam'
-    
-    get:
-      summary: Get a clothing item by ID
-      responses:
-        '200':
-          description: Clothing item retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cloth'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
-    
-    put:
-      summary: Update a clothing item
+    post:
+      summary: Create a new item
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateClothRequest'
+              $ref: "#/components/schemas/CreateItemRequest"
       responses:
-        '200':
-          description: Clothing item updated successfully
+        "201":
+          description: Item created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Cloth'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
-    
-    delete:
-      summary: Delete a clothing item
+                $ref: "#/components/schemas/Item"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /inventory/{id}:
+    parameters:
+      - $ref: "#/components/parameters/UUIDParam"
+
+    get:
+      summary: Get an item by ID
       responses:
-        '204':
-          description: Clothing item deleted successfully
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
+        "200":
+          description: Item retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    put:
+      summary: Update an item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateItemRequest"
+      responses:
+        "200":
+          description: Item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    delete:
+      summary: Delete an item
+      responses:
+        "204":
+          description: Item deleted successfully
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
 
 components:
   schemas:
     UUID:
       type: string
-      pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+      pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
       example: "123e4567-e89b-12d3-a456-426614174000"
       description: A UUID v4 string
 
-    Cloth:
+    Item:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/UUID'
+          $ref: "#/components/schemas/UUID"
         name:
           type: string
           minLength: 1
@@ -131,10 +185,10 @@ components:
           minLength: 1
         location:
           type: string
-        created_at:
+        createdAt:
           type: string
           format: date-time
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
       required:
@@ -144,10 +198,10 @@ components:
         - color
         - size
         - brand
-        - created_at
-        - updated_at
+        - createdAt
+        - updatedAt
 
-    CreateClothRequest:
+    CreateItemRequest:
       type: object
       properties:
         name:
@@ -181,27 +235,83 @@ components:
         message:
           type: string
 
+    SignUpRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+
+    SignInRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
+        - createdAt
+        - updatedAt
+
   responses:
     BadRequest:
       description: Invalid request
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
 
     NotFound:
       description: Resource not found
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
 
     InternalError:
       description: Internal server error
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
 
   parameters:
     UUIDParam:
@@ -209,5 +319,5 @@ components:
       in: path
       required: true
       schema:
-        $ref: '#/components/schemas/UUID'
+        $ref: "#/components/schemas/UUID"
       description: The UUID of the resource

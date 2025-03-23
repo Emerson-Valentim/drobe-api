@@ -4,11 +4,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/emersonvalentim/drobe-api/cmd/migrations/config"
-	"github.com/emersonvalentim/drobe-api/internal/env"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+
+	"github.com/emersonvalentim/drobe-api/cmd/migrations/config"
+	"github.com/emersonvalentim/drobe-api/internal/env"
 )
 
 func main() {
