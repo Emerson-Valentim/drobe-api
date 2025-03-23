@@ -36,13 +36,3 @@ func (r *Router) Register() {
 func (r *Router) listen(port string) {
 	r.engine.Logger.Fatal(r.engine.Start(port))
 }
-
-type Reason struct {
-	Reason string `json:"reason"`
-}
-
-func WithReason(reason string) Reason {
-	return Reason{
-		Reason: reason,
-	}
-}

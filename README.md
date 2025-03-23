@@ -28,4 +28,4 @@ This project follows a service-oriented architecture with:
 ## Required tools
 
 - github.com/hedhyw/go-import-lint
-- github.com/daixiang0/gci
+- github.com/golang-migrate/migrate
