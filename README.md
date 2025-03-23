@@ -24,3 +24,8 @@ This project follows a service-oriented architecture with:
 - Services: Business logic layer
 - Types: Core domain models
 - Documentation: API and project documentation
+
+## Required tools
+
+- github.com/hedhyw/go-import-lint
+- github.com/daixiang0/gci

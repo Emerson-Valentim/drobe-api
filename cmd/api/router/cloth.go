@@ -1,8 +1,9 @@
 package router
 
 import (
-	"github.com/emersonvalentim/drobe-api/services/clothing"
 	"github.com/labstack/echo/v4"
+
+	"github.com/emersonvalentim/drobe-api/services/clothing"
 )
 
 type ClothRouter struct {

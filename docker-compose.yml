@@ -8,11 +8,15 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - PORT=8080
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=drobe
+      - S3_ENDPOINT=http://localstack:4566
+      - S3_REGION=us-east-1
+      - S3_BUCKET=clothes
     volumes:
       - .:/app  # Mount the current directory for hot reloading
     command: air  # Use air for hot reloading in development
@@ -47,7 +51,6 @@ services:
       - POSTGRES_DB=drobe
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./scripts/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - drobe-network
 

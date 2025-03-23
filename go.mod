@@ -2,7 +2,10 @@ module github.com/emersonvalentim/drobe-api
 
 go 1.23
 
-require github.com/labstack/echo/v4 v4.13.3
+require (
+	github.com/caarlos0/env/v9 v9.0.0
+	github.com/labstack/echo/v4 v4.13.3
+)
 
 require (
 	github.com/labstack/gommon v0.4.2 // indirect
