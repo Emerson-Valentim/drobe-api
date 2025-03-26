@@ -1,11 +1,11 @@
+version: "2"
 linters:
   enable:
-    - goimports
-    - gofmt
     - govet
-    - gosimple
-    - staticcheck
 
-linters-settings:
-  goimports:
-    local-prefixes: github.com/emersonvalentim/drobe-api
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+

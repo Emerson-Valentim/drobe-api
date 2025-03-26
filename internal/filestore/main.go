@@ -2,7 +2,6 @@ package filestore
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -38,7 +37,7 @@ func NewS3Client(cfg aws.Config, bucket string, endpoint string) *Client {
 func (s *Client) GetPresignedUploadURL(ctx context.Context, reference string, expiry time.Duration) (string, string, error) {
 	presignClient := s3.NewPresignClient(s.client)
 
-	key := fmt.Sprintf("%s", reference)
+	key := reference
 
 	input := &s3.PutObjectInput{
 		Bucket: aws.String(s.bucket),
