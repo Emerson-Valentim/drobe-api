@@ -196,8 +196,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     $ref: "#/components/schemas/User"
                 required:
@@ -230,8 +228,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     type: string
                     description: JWT token
@@ -259,8 +255,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     type: array
                     items:
@@ -286,8 +280,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     $ref: "#/components/schemas/Item"
                 required:
@@ -311,8 +303,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     $ref: "#/components/schemas/Item"
                 required:
@@ -340,8 +330,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     $ref: "#/components/schemas/Item"
                 required:
@@ -378,8 +366,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
                     type: object
                     properties:
