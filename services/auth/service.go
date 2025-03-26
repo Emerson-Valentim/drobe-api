@@ -14,13 +14,23 @@ import (
 	"github.com/emersonvalentim/drobe-api/internal/uuid"
 )
 
+const (
+	sessionDuration = time.Minute * 60
+)
+
+type Repository interface {
+	CreateUser(ctx context.Context, user drobe.User) error
+	GetUserByEmail(ctx context.Context, email string) (drobe.User, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (drobe.User, error)
+}
+
 type Service struct {
-	repo         *Repository
+	repo         Repository
 	passwordSalt string
 	sessionSalt  string
 }
 
-func NewService(passwordSalt, sessionSalt string, repo *Repository) *Service {
+func NewService(passwordSalt, sessionSalt string, repo Repository) *Service {
 	return &Service{
 		passwordSalt: passwordSalt,
 		sessionSalt:  sessionSalt,
@@ -108,7 +118,7 @@ func (s *Service) hashPassword(password string) string {
 }
 
 func (s *Service) createSession(user drobe.User) (drobe.Session, error) {
-	expiresAt := time.Now().Add(time.Minute * 1)
+	expiresAt := time.Now().Add(sessionDuration)
 
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": user.ID,

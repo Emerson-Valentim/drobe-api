@@ -11,12 +11,12 @@ import (
 	"github.com/emersonvalentim/drobe-api/services/inventory/models"
 )
 
-type Repository struct {
+type PostgresRepository struct {
 	db *models.Queries
 }
 
-func NewRepository(pg *postgres.Postgres) *Repository {
-	return &Repository{db: models.New(pg.Conn)}
+func NewRepository(pg *postgres.Postgres) *PostgresRepository {
+	return &PostgresRepository{db: models.New(pg.Conn)}
 }
 
 func asItem(item models.Inventory) (drobe.Item, error) {
@@ -38,7 +38,7 @@ func asItem(item models.Inventory) (drobe.Item, error) {
 	}, nil
 }
 
-func (r *Repository) CreateItem(ctx context.Context, item drobe.Item) error {
+func (r *PostgresRepository) CreateItem(ctx context.Context, item drobe.Item) error {
 	_, err := r.db.CreateItem(ctx, models.CreateItemParams{
 		ID:        pgtype.UUID{Bytes: item.ID.Bytes(), Valid: true},
 		OwnerID:   pgtype.UUID{Bytes: item.OwnerID.Bytes(), Valid: true},
@@ -55,7 +55,7 @@ func (r *Repository) CreateItem(ctx context.Context, item drobe.Item) error {
 	return err
 }
 
-func (r *Repository) GetItem(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) (drobe.Item, error) {
+func (r *PostgresRepository) GetItem(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) (drobe.Item, error) {
 	item, err := r.db.GetItemByID(ctx, models.GetItemByIDParams{
 		ID:      pgtype.UUID{Bytes: id.Bytes(), Valid: true},
 		OwnerID: pgtype.UUID{Bytes: ownerID.Bytes(), Valid: true},
@@ -66,7 +66,7 @@ func (r *Repository) GetItem(ctx context.Context, id uuid.UUID, ownerID uuid.UUI
 	return asItem(item)
 }
 
-func (r *Repository) ListItems(ctx context.Context, ownerID uuid.UUID) ([]drobe.Item, error) {
+func (r *PostgresRepository) ListItems(ctx context.Context, ownerID uuid.UUID) ([]drobe.Item, error) {
 	items, err := r.db.ListItems(ctx, pgtype.UUID{Bytes: ownerID.Bytes(), Valid: true})
 	if err != nil {
 		return nil, err
@@ -84,9 +84,17 @@ func (r *Repository) ListItems(ctx context.Context, ownerID uuid.UUID) ([]drobe.
 	return result, nil
 }
 
-func (r *Repository) DeleteItem(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error {
+func (r *PostgresRepository) DeleteItem(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error {
 	return r.db.DeleteItem(ctx, models.DeleteItemParams{
 		ID:      pgtype.UUID{Bytes: id.Bytes(), Valid: true},
 		OwnerID: pgtype.UUID{Bytes: ownerID.Bytes(), Valid: true},
+	})
+}
+
+func (r *PostgresRepository) UpdateItemLocation(ctx context.Context, id uuid.UUID, ownerID uuid.UUID, location string) error {
+	return r.db.UpdateItemLocation(ctx, models.UpdateItemLocationParams{
+		ID:       pgtype.UUID{Bytes: id.Bytes(), Valid: true},
+		OwnerID:  pgtype.UUID{Bytes: ownerID.Bytes(), Valid: true},
+		Location: location,
 	})
 }

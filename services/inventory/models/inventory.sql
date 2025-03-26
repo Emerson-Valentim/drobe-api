@@ -11,3 +11,6 @@ SELECT * FROM inventory WHERE owner_id = $1;
 
 -- name: DeleteItem :exec
 DELETE FROM inventory WHERE id = $1 AND owner_id = $2;
+
+-- name: UpdateItemLocation :exec
+UPDATE inventory SET location = $2 WHERE id = $1 AND owner_id = $3;

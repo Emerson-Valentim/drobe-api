@@ -19,3 +19,11 @@ type Item struct {
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
+
+func (i *Item) IsImageUploaded() bool {
+	return i.Location != ""
+}
+
+func (i *Item) UpdateLocation(location string) {
+	i.Location = location
+}

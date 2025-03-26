@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/emersonvalentim/drobe-api"
+	"github.com/emersonvalentim/drobe-api/cmd/api/config"
 	"github.com/emersonvalentim/drobe-api/internal/uuid"
 	"github.com/emersonvalentim/drobe-api/services/inventory"
 )
@@ -22,42 +22,28 @@ func (r *InventoryRouter) register(e *echo.Echo) {
 	items.POST("", r.CreateItem)
 	items.PUT("/:id", r.UpdateItem)
 	items.DELETE("/:id", r.DeleteItem)
-}
-
-type ListInventoryResponse struct {
-	Results []drobe.Item `json:"results"`
+	items.POST("/:id/image", r.UploadImage)
 }
 
 func (r *InventoryRouter) ListItems(c echo.Context) error {
 	items, err := r.service.ListItems(c.Request().Context(), getUserID(c))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusInternalServerError).WithMessage(err.Error()).Send(c)
 	}
-	return c.JSON(http.StatusOK, ListInventoryResponse{
-		Results: items,
-	})
+	return config.NewApiResponse(http.StatusOK).WithData(items).Send(c)
 }
 
 func (r *InventoryRouter) GetItem(c echo.Context) error {
 	itemID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusBadRequest).WithMessage(err.Error()).Send(c)
 	}
 
 	item, err := r.service.GetItem(c.Request().Context(), itemID, getUserID(c))
 	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusNotFound).WithMessage(err.Error()).Send(c)
 	}
-	return c.JSON(http.StatusOK, item)
+	return config.NewApiResponse(http.StatusOK).WithData(item).Send(c)
 }
 
 type CreateInventoryRequest struct {
@@ -71,10 +57,7 @@ type CreateInventoryRequest struct {
 func (r *InventoryRouter) CreateItem(c echo.Context) error {
 	input := CreateInventoryRequest{}
 	if err := c.Bind(&input); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusBadRequest).WithMessage(err.Error()).Send(c)
 	}
 
 	item, err := r.service.CreateItem(c.Request().Context(), inventory.CreateInventoryItem{
@@ -86,36 +69,41 @@ func (r *InventoryRouter) CreateItem(c echo.Context) error {
 		OwnerID:  getUserID(c),
 	})
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusInternalServerError).WithMessage(err.Error()).Send(c)
 	}
-	return c.JSON(http.StatusCreated, item)
+	return config.NewApiResponse(http.StatusCreated).WithData(item).Send(c)
 }
 
 func (r *InventoryRouter) UpdateItem(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]string{
-		"status": "ok",
-	})
+	return nil
 }
 
 func (r *InventoryRouter) DeleteItem(c echo.Context) error {
 	itemID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusBadRequest).WithMessage(err.Error()).Send(c)
 	}
 
 	err = r.service.DeleteItem(c.Request().Context(), itemID, getUserID(c))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusInternalServerError).WithMessage(err.Error()).Send(c)
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+func (r *InventoryRouter) UploadImage(c echo.Context) error {
+	itemID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return config.NewApiResponse(http.StatusBadRequest).WithMessage(err.Error()).Send(c)
+	}
+
+	uploadURL, err := r.service.UploadImage(c.Request().Context(), itemID, getUserID(c))
+	if err != nil {
+		return config.NewApiResponse(http.StatusInternalServerError).WithMessage(err.Error()).Send(c)
+	}
+
+	return config.NewApiResponse(http.StatusOK).WithData(map[string]string{
+		"uploadURL": uploadURL,
+	}).Send(c)
 }

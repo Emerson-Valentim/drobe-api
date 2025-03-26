@@ -11,12 +11,12 @@ import (
 	"github.com/emersonvalentim/drobe-api/services/auth/models"
 )
 
-type Repository struct {
+type PostgresRepository struct {
 	db *models.Queries
 }
 
-func NewRepository(pg *postgres.Postgres) *Repository {
-	return &Repository{db: models.New(pg.Conn)}
+func NewRepository(pg *postgres.Postgres) *PostgresRepository {
+	return &PostgresRepository{db: models.New(pg.Conn)}
 }
 
 func asUser(user models.User) (drobe.User, error) {
@@ -36,7 +36,7 @@ func asUser(user models.User) (drobe.User, error) {
 	}, nil
 }
 
-func (r *Repository) CreateUser(ctx context.Context, user drobe.User) error {
+func (r *PostgresRepository) CreateUser(ctx context.Context, user drobe.User) error {
 	_, err := r.db.CreateUser(ctx, models.CreateUserParams{
 		ID:           pgtype.UUID{Bytes: user.ID.Bytes(), Valid: true},
 		Email:        user.Email,
@@ -49,7 +49,7 @@ func (r *Repository) CreateUser(ctx context.Context, user drobe.User) error {
 	return err
 }
 
-func (r *Repository) GetUserByEmail(ctx context.Context, email string) (drobe.User, error) {
+func (r *PostgresRepository) GetUserByEmail(ctx context.Context, email string) (drobe.User, error) {
 	user, err := r.db.GetUserByEmail(ctx, email)
 	if err != nil {
 		return drobe.User{}, err
@@ -58,7 +58,7 @@ func (r *Repository) GetUserByEmail(ctx context.Context, email string) (drobe.Us
 	return asUser(user)
 }
 
-func (r *Repository) GetUserByID(ctx context.Context, id uuid.UUID) (drobe.User, error) {
+func (r *PostgresRepository) GetUserByID(ctx context.Context, id uuid.UUID) (drobe.User, error) {
 	user, err := r.db.GetUserByID(ctx, pgtype.UUID{Bytes: id.Bytes(), Valid: true})
 	if err != nil {
 		return drobe.User{}, err
