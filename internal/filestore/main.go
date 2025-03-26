@@ -37,11 +37,9 @@ func NewS3Client(cfg aws.Config, bucket string, endpoint string) *Client {
 func (s *Client) GetPresignedUploadURL(ctx context.Context, reference string, expiry time.Duration) (string, string, error) {
 	presignClient := s3.NewPresignClient(s.client)
 
-	key := reference
-
 	input := &s3.PutObjectInput{
 		Bucket: aws.String(s.bucket),
-		Key:    aws.String(key),
+		Key:    aws.String(reference),
 	}
 
 	presignedReq, err := presignClient.PresignPutObject(ctx, input, s3.WithPresignExpires(expiry))
@@ -49,7 +47,7 @@ func (s *Client) GetPresignedUploadURL(ctx context.Context, reference string, ex
 		return "", "", err
 	}
 
-	return key, presignedReq.URL, nil
+	return reference, presignedReq.URL, nil
 }
 
 // GetPresignedDownloadURL generates a presigned URL for downloading a file from S3
