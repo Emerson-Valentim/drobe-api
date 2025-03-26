@@ -18,13 +18,19 @@ const (
 	sessionDuration = time.Minute * 60
 )
 
+type Repository interface {
+	CreateUser(ctx context.Context, user drobe.User) error
+	GetUserByEmail(ctx context.Context, email string) (drobe.User, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (drobe.User, error)
+}
+
 type Service struct {
-	repo         *Repository
+	repo         Repository
 	passwordSalt string
 	sessionSalt  string
 }
 
-func NewService(passwordSalt, sessionSalt string, repo *Repository) *Service {
+func NewService(passwordSalt, sessionSalt string, repo Repository) *Service {
 	return &Service{
 		passwordSalt: passwordSalt,
 		sessionSalt:  sessionSalt,
