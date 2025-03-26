@@ -1,6 +1,11 @@
 package config
 
+import (
+	"github.com/emersonvalentim/drobe-api/internal/env"
+)
+
 type Env struct {
+	AppEnv env.AppEnv `env:"APP_ENV" envDefault:"dev"`
 	// Server configuration
 	Port string `env:"PORT" envDefault:"8080"`
 

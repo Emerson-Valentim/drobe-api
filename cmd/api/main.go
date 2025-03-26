@@ -52,7 +52,7 @@ func setupAWSConfig(cfg config.Env) (aws.Config, error) {
 		return aws.Config{}, err
 	}
 
-	if cfg.AWS.AccessKeyID != "" && cfg.AWS.SecretAccessKey != "" {
+	if cfg.AppEnv == env.AppEnvDev {
 		awsConfig.Credentials = credentials.NewStaticCredentialsProvider(cfg.AWS.AccessKeyID, cfg.AWS.SecretAccessKey, "")
 	}
 
