@@ -6,9 +6,9 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/emersonvalentim/drobe-api"
+	"github.com/emersonvalentim/drobe-api/db/models"
 	"github.com/emersonvalentim/drobe-api/internal/postgres"
 	"github.com/emersonvalentim/drobe-api/internal/uuid"
-	"github.com/emersonvalentim/drobe-api/services/auth/models"
 )
 
 type PostgresRepository struct {
