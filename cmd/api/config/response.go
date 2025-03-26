@@ -21,11 +21,6 @@ func (r *ApiResponse) WithMessage(message string) *ApiResponse {
 	return r
 }
 
-func (r *ApiResponse) WithStatus(status int) *ApiResponse {
-	r.Status = status
-	return r
-}
-
 func (r *ApiResponse) WithData(data interface{}) *ApiResponse {
 	r.Data = data
 	return r
