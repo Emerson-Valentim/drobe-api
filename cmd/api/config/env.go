@@ -4,17 +4,26 @@ type Env struct {
 	// Server configuration
 	Port string `env:"PORT" envDefault:"8080"`
 
-	// Postgres configuration
-	PostgresHost     string `env:"POSTGRES_HOST" envDefault:"postgres"`
-	PostgresPort     string `env:"POSTGRES_PORT" envDefault:"5432"`
-	PostgresUser     string `env:"POSTGRES_USER" envDefault:"postgres"`
-	PostgresPassword string `env:"POSTGRES_PASSWORD" envDefault:"postgres"`
-	PostgresDB       string `env:"POSTGRES_DB" envDefault:"drobe"`
+	AWS struct {
+		AccessKeyID     string `env:"AWS_ACCESS_KEY_ID" envDefault:""`
+		SecretAccessKey string `env:"AWS_SECRET_ACCESS_KEY" envDefault:""`
+		Region          string `env:"AWS_REGION" envDefault:"us-east-1"`
+	}
 
-	// S3/LocalStack configuration
-	S3Endpoint string `env:"S3_ENDPOINT" envDefault:"http://localhost:4566"`
-	S3Region   string `env:"S3_REGION" envDefault:"us-east-1"`
-	S3Bucket   string `env:"S3_BUCKET" envDefault:"inventory"`
+	// Postgres configuration
+	Postgres struct {
+		Host     string `env:"POSTGRES_HOST" envDefault:"postgres"`
+		Port     string `env:"POSTGRES_PORT" envDefault:"5432"`
+		User     string `env:"POSTGRES_USER" envDefault:"postgres"`
+		Password string `env:"POSTGRES_PASSWORD" envDefault:"postgres"`
+		DB       string `env:"POSTGRES_DB" envDefault:"drobe"`
+	}
+
+	// S3 configuration
+	S3 struct {
+		Endpoint string `env:"S3_ENDPOINT" envDefault:"http://localstack:4566"`
+		Bucket   string `env:"S3_BUCKET" envDefault:"inventory"`
+	}
 
 	// JWT configuration
 	JWTSecret string `env:"JWT_SECRET" envDefault:"secret"`

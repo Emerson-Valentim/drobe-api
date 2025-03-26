@@ -134,3 +134,18 @@ func (q *Queries) ListItems(ctx context.Context, ownerID pgtype.UUID) ([]Invento
 	}
 	return items, nil
 }
+
+const updateItemLocation = `-- name: UpdateItemLocation :exec
+UPDATE inventory SET location = $2 WHERE id = $1 AND owner_id = $3
+`
+
+type UpdateItemLocationParams struct {
+	ID       pgtype.UUID
+	Location string
+	OwnerID  pgtype.UUID
+}
+
+func (q *Queries) UpdateItemLocation(ctx context.Context, arg UpdateItemLocationParams) error {
+	_, err := q.db.Exec(ctx, updateItemLocation, arg.ID, arg.Location, arg.OwnerID)
+	return err
+}

@@ -14,6 +14,10 @@ import (
 	"github.com/emersonvalentim/drobe-api/internal/uuid"
 )
 
+const (
+	sessionDuration = time.Minute * 60
+)
+
 type Service struct {
 	repo         *Repository
 	passwordSalt string
@@ -108,7 +112,7 @@ func (s *Service) hashPassword(password string) string {
 }
 
 func (s *Service) createSession(user drobe.User) (drobe.Session, error) {
-	expiresAt := time.Now().Add(time.Minute * 1)
+	expiresAt := time.Now().Add(sessionDuration)
 
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": user.ID,

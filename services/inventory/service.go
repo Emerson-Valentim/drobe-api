@@ -2,19 +2,35 @@ package inventory
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/emersonvalentim/drobe-api"
 	"github.com/emersonvalentim/drobe-api/internal/uuid"
 )
 
-type Service struct {
-	repo *Repository
+type Repository interface {
+	CreateItem(ctx context.Context, item drobe.Item) error
+	GetItem(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) (drobe.Item, error)
+	ListItems(ctx context.Context, ownerID uuid.UUID) ([]drobe.Item, error)
+	DeleteItem(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error
+	UpdateItemLocation(ctx context.Context, id uuid.UUID, ownerID uuid.UUID, location string) error
 }
 
-func NewService(repo *Repository) *Service {
+type FileStore interface {
+	GetPresignedUploadURL(ctx context.Context, key string, expiry time.Duration) (string, string, error)
+	DeleteObject(ctx context.Context, key string) error
+}
+
+type Service struct {
+	repo      Repository
+	filestore FileStore
+}
+
+func NewService(repo Repository, filestore FileStore) *Service {
 	return &Service{
-		repo: repo,
+		repo:      repo,
+		filestore: filestore,
 	}
 }
 
@@ -66,4 +82,30 @@ func (s *Service) ListItems(ctx context.Context, ownerID uuid.UUID) ([]drobe.Ite
 
 func (s *Service) DeleteItem(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error {
 	return s.repo.DeleteItem(ctx, id, ownerID)
+}
+
+func (s *Service) UploadImage(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) (string, error) {
+	item, err := s.repo.GetItem(ctx, id, ownerID)
+	if err != nil {
+		return "", err
+	}
+
+	location, uploadURL, err := s.filestore.GetPresignedUploadURL(ctx, fmt.Sprintf("%s/%s", ownerID.String(), id.String()), 5*time.Minute)
+	if err != nil {
+		return "", err
+	}
+
+	// If the item already has an image, delete it
+	if item.IsImageUploaded() {
+		if err := s.filestore.DeleteObject(ctx, item.Location); err != nil {
+			return uploadURL, err
+		}
+	}
+
+	item.UpdateLocation(location)
+	if err = s.repo.UpdateItemLocation(ctx, id, ownerID, location); err != nil {
+		return uploadURL, err
+	}
+
+	return uploadURL, nil
 }

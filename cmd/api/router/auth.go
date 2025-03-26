@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 
+	"github.com/emersonvalentim/drobe-api/cmd/api/config"
 	"github.com/emersonvalentim/drobe-api/services/auth"
 	"github.com/labstack/echo/v4"
 )
@@ -28,10 +29,7 @@ type SignUpRequest struct {
 func (r *AuthRouter) SignUp(c echo.Context) error {
 	request := SignUpRequest{}
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusBadRequest).WithMessage(err.Error()).Send(c)
 	}
 
 	user, err := r.service.SignUp(c.Request().Context(), auth.SignUp{
@@ -41,13 +39,10 @@ func (r *AuthRouter) SignUp(c echo.Context) error {
 		LastName:  request.LastName,
 	})
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusInternalServerError).WithMessage(err.Error()).Send(c)
 	}
 
-	return c.JSON(http.StatusCreated, user)
+	return config.NewApiResponse(http.StatusCreated).WithData(user).Send(c)
 }
 
 type SignInRequest struct {
@@ -58,10 +53,7 @@ type SignInRequest struct {
 func (r *AuthRouter) SignIn(c echo.Context) error {
 	request := SignInRequest{}
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusBadRequest).WithMessage(err.Error()).Send(c)
 	}
 
 	token, err := r.service.SignIn(c.Request().Context(), auth.SignIn{
@@ -69,11 +61,8 @@ func (r *AuthRouter) SignIn(c echo.Context) error {
 		Password: request.Password,
 	})
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return config.NewApiResponse(http.StatusInternalServerError).WithMessage(err.Error()).Send(c)
 	}
 
-	return c.JSON(http.StatusOK, token)
+	return config.NewApiResponse(http.StatusOK).WithData(token).Send(c)
 }

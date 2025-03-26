@@ -12,12 +12,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=drobe
-      - S3_ENDPOINT=http://localstack:4566
-      - S3_REGION=us-east-1
-      - S3_BUCKET=inventory
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
     volumes:
-      - .:/app  # Mount the current directory for hot reloading
-    command: air  # Use air for hot reloading in development
+      - .:/app # Mount the current directory for hot reloading
+    command: air # Use air for hot reloading in development
     depends_on:
       - migrations
       - localstack
@@ -25,7 +24,7 @@ services:
       - drobe-network
 
   migrations:
-    build: 
+    build:
       context: .
       dockerfile: cmd/migrations/Dockerfile
     command: ./main
